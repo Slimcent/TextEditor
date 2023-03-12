@@ -1,16 +1,27 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import tkinter as tk
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def openfile():
+    print("File Open")
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+form = tk.Tk()
+form.title("Python Menus")
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+menuBar = tk.Menu(form)
+
+fileMenuItems = tk.Menu(menuBar, tearoff=0)
+
+fileMenuItems.add_command(label="Open", command=openfile)
+fileMenuItems.add_command(label="Save", command=openfile)
+fileMenuItems.add_command(label="Save As", command=openfile)
+fileMenuItems.add_command(label="Close", command=openfile)
+fileMenuItems.add_separator()  # A seperator
+fileMenuItems.add_command(label="Quit", command=form.quit)
+
+menuBar.add_cascade(label="File", menu=fileMenuItems)
+
+form.config(menu=menuBar)
+
+form.mainloop()
+
