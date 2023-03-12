@@ -1,11 +1,46 @@
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import messagebox
 
 
 def openfile():
     filename = filedialog.askopenfilename(initialdir="/", title="Open File",
                                           filetypes=(("Text Files", "*.txt"), ("All Files", "*.*")))
-    print(filename)
+    try:
+        if filename:
+            the_file = open(filename)
+            textArea.delete('1.0', tk.END)
+            textArea.insert(tk.END, the_file.read())
+            the_file.close()
+        elif not filename:
+            messagebox.showinfo("Cancel", "You clicked Cancel")
+    except IOError:
+        messagebox.showinfo("Error", "Could not open file")
+
+
+def openfile1():
+    filename = filedialog.askopenfilename(initialdir="/", title="Open File",
+                                          filetypes=(("Text Files", "*.txt"), ("All Files", "*.*")))
+    textArea.delete('1.0', tk.END)
+    try:
+        if filename:
+            the_file = open(filename)
+            for line in the_file.readlines():
+                text_line = parseline(line)
+                textArea.insert(tk.END, text_line + '\n')
+
+            the_file.close()
+        elif not filename:
+            messagebox.showinfo("Cancel", "You clicked Cancel")
+    except IOError:
+        messagebox.showinfo("Error", "Could not open file")
+
+
+def parseline(the_line):
+    parsed_line = the_line.strip()
+    space_pos = parsed_line.rfind(' ')
+    new_text_line = parsed_line[space_pos:] + ", " + parsed_line[:space_pos]
+    return new_text_line.strip()
 
 
 form = tk.Tk()
@@ -16,6 +51,7 @@ menuBar = tk.Menu(form)
 #  File menu
 fileMenuItems = tk.Menu(menuBar, tearoff=0)
 fileMenuItems.add_command(label="Open", command=openfile)
+fileMenuItems.add_command(label="Open1", command=openfile1)
 fileMenuItems.add_command(label="Save", command=openfile)
 fileMenuItems.add_command(label="Save As", command=openfile)
 fileMenuItems.add_command(label="Close", command=openfile)
@@ -34,11 +70,19 @@ menuBar.add_cascade(label="Edit", menu=editMenu)
 
 form.config(menu=menuBar)
 
-textArea = tk.Text(form, height=12, width=80, wrap=tk.WORD)
-textArea.pack()
-
+textArea = tk.Text(form, height=12, width=80, wrap=tk.NONE)
 textArea.insert(tk.END, 'Some default text here')
-textArea.configure(font=("Arial", 14, "bold", "italic"))
+textArea.configure(font=("Arial", 11))
 
+scrollV = tk.Scrollbar(form, orient=tk.VERTICAL)  # Vertical scroll bar
+scrollV.config(command=textArea.yview)
+textArea.configure(yscrollcommand=scrollV.set)
+scrollV.pack(side=tk.RIGHT, fill=tk.Y)
+
+scrollH = tk.Scrollbar(form, orient=tk.HORIZONTAL)  # Horizontal scroll bar
+scrollH.config(command=textArea.xview)
+textArea.configure(xscrollcommand=scrollH.set)
+scrollH.pack(side=tk.BOTTOM, fill=tk.X)
+
+textArea.pack()
 form.mainloop()
-
