@@ -2,8 +2,36 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 
+filename = ''
+
+
+def close_file():
+    textArea.delete('1.0', tk.END)
+
+
+def save_file_as():
+    save_text_as = filedialog.asksaveasfile(mode='w', defaultextension='.txt')
+    if save_text_as:
+        text_to_save = textArea.get('1.0', 'end-1c')
+        save_text_as.write(text_to_save)
+        save_text_as.close()
+    else:
+        messagebox.showinfo("Error", "Cancelled")
+
+
+def savefile():
+    global filename
+    if filename:
+        text_area_text = textArea.get('1.0', 'end-1c')
+        save_text = open(filename, 'w')
+        save_text.write(text_area_text)
+        save_text.close()
+    else:
+        messagebox.showinfo("Error", "No file open")
+
 
 def openfile():
+    global filename
     filename = filedialog.askopenfilename(initialdir="/", title="Open File",
                                           filetypes=(("Text Files", "*.txt"), ("All Files", "*.*")))
     try:
@@ -19,6 +47,7 @@ def openfile():
 
 
 def openfile1():
+    global filename
     filename = filedialog.askopenfilename(initialdir="/", title="Open File",
                                           filetypes=(("Text Files", "*.txt"), ("All Files", "*.*")))
     textArea.delete('1.0', tk.END)
@@ -52,9 +81,9 @@ menuBar = tk.Menu(form)
 fileMenuItems = tk.Menu(menuBar, tearoff=0)
 fileMenuItems.add_command(label="Open", command=openfile)
 fileMenuItems.add_command(label="Open1", command=openfile1)
-fileMenuItems.add_command(label="Save", command=openfile)
-fileMenuItems.add_command(label="Save As", command=openfile)
-fileMenuItems.add_command(label="Close", command=openfile)
+fileMenuItems.add_command(label="Save", command=savefile)
+fileMenuItems.add_command(label="Save As", command=save_file_as)
+fileMenuItems.add_command(label="Clear", command=close_file)
 fileMenuItems.add_separator()  # A seperator
 fileMenuItems.add_command(label="Quit", command=form.quit)
 
